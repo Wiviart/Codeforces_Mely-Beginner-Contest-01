@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text;
 
 class Program
 {
@@ -22,50 +21,38 @@ class Program
         return fib;
     }
 
-    static string FibonacciCalculator(string testcase)
-    {
-        string[] input = testcase.Split(' ');
-        uint a = uint.Parse(input[0]);
-        uint b = uint.Parse(input[1]);
-        uint n = uint.Parse(input[2]);
-
-        var r = Fibonacci(a, b, n);
-
-        return r.ToString();
-    }
-
     static void Main()
     {
-        ushort number = ushort.Parse(Console.ReadLine());
+        ushort number = 0;
 
-        string[] testcase = new string[number];
+        while (!IsValid(number, 1, 3))
+            number = ushort.Parse(Console.ReadLine());
+
+        uint[][] testcase = new uint[number][];
 
         for (ushort i = 0; i < number; i++)
         {
-            testcase[i] = Console.ReadLine();
+            testcase[i] = Array.ConvertAll(Console.ReadLine().Split(' '), uint.Parse);
+
+            if (!IsValid(testcase[i][0], 0, 9) || !IsValid(testcase[i][1], 0, 9) || !IsValid(testcase[i][2], 0, 9))
+            {
+                i--;
+                continue;
+            }
         }
 
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-
-        long memoryUsedBefore = GC.GetTotalMemory(true);
+        DiagnosticsFunction.Start();
 
         for (int i = 0; i < testcase.Length; i++)
         {
-            var result = FibonacciCalculator(testcase[i]);
+            var result = Fibonacci(testcase[i][0], testcase[i][1], testcase[i][2]);
             Console.WriteLine(result);
         }
-        // var result = Test();
 
-
-        stopwatch.Stop();
-        Console.WriteLine($"Elapsed time: {stopwatch.ElapsedMilliseconds / 1000} seconds");
-
-        long memoryUsed = GC.GetTotalMemory(true);
-        Console.WriteLine($"Memory used: {(memoryUsed - memoryUsedBefore) / 1000} KB");
+        DiagnosticsFunction.End();
     }
 
-    static bool IsValid(int number, int min, int pow)
+    static bool IsValid(uint number, uint min, int pow)
     {
         if (number < min || number > Math.Pow(10, pow))
         {
@@ -73,23 +60,5 @@ class Program
         }
         return true;
     }
-
-    static string Test(int i)
-    {
-        string[] testcase =
-        {
-            "3 5 2",
-            "7 3 0",
-            "191 325 123548",
-            "5 12 98",
-            "8765 1232 12323",
-            "54 12 9480",
-            "876 134 5554"
-        };
-
-        return FibonacciCalculator(testcase[i]);
-    }
-
-
 }
 
